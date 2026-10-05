@@ -124,6 +124,27 @@
   }
   .verse-ref{margin-top:22px;font-size:10.5px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold-deep);text-indent:.4em;}
 
+  /* ───────── CARTÃO DO CONVITE ───────── */
+  #convite{padding:10px 0 40px;}
+  .card{
+    position:relative;margin:0 18px;padding:52px 22px 150px;text-align:center;
+    background:#fff;border:1px solid var(--gold-soft);
+    box-shadow:0 18px 50px rgba(138,106,36,.10);
+  }
+  .card::before{content:'';position:absolute;inset:9px;border:1.5px solid #DCC387;pointer-events:none;}
+  .card .flor{width:42%;max-width:190px;bottom:-14px;}
+  .card .flor.esq{left:-16px;}
+  .card .flor.dir{right:-16px;}
+  .card .mono{--ms:96px;margin-bottom:26px;}
+  .parents{display:flex;flex-direction:column;gap:18px;}
+  .parents p{font-family:'Cinzel',serif;font-size:13.5px;letter-spacing:.06em;line-height:1.75;color:var(--ink);}
+  .card-invite{margin-top:28px;font-size:11px;letter-spacing:.24em;text-transform:uppercase;line-height:1.9;color:var(--ink-soft);text-indent:.24em;}
+  .card-names{margin-top:20px;font-family:'Cinzel',serif;font-size:clamp(26px,8vw,36px);line-height:1.15;letter-spacing:.03em;
+    background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .card-names .amp{font-family:'Cormorant Garamond',serif;font-style:italic;}
+  .card-when{margin-top:22px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;line-height:2;color:var(--ink);text-indent:.22em;}
+  .card-quote{margin-top:24px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;line-height:1.5;color:var(--gold-deep);max-width:330px;margin-left:auto;margin-right:auto;}
+
   /* ───────── DAY / LOCATIONS ───────── */
   #day{padding:64px 0 8px;}
   .quickfacts{display:flex;justify-content:center;gap:0;margin:40px 0 8px;}
@@ -251,7 +272,7 @@
   @keyframes pulse{0%,100%{opacity:.15}50%{opacity:1}}
   @keyframes floatIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 
-  @media(max-width:380px){.inner{padding:0 22px}.qf .v{font-size:19px}}
+  @media(max-width:380px){.inner{padding:0 22px}.qf .v{font-size:19px}.parents p{font-size:12px}}
   @media(min-width:760px){.hero-photo{height:88vh;min-height:620px;max-height:940px}}
 </style>
 </head>
@@ -289,6 +310,23 @@
     <div class="inner">
       <p class="verse-q reveal" id="verseText"></p>
       <p class="verse-ref reveal d1" id="verseRef"></p>
+    </div>
+  </section>
+
+  <!-- CONVITE (como o convite físico) -->
+  <section id="convite">
+    <div class="card reveal">
+      <span class="mono" role="img" aria-label="Monograma B J"></span>
+      <div class="parents">
+        <p>Isaac Severino Botelho<br>Lucileuda dos Santos Botelho</p>
+        <p>André Cezar Corrêa Pereira<br>Alice Farrapeira Corrêa Pereira</p>
+      </div>
+      <p class="card-invite">têm a honra de convidar para a celebração do casamento de seus filhos</p>
+      <p class="card-names">Bianca <span class="amp">&amp;</span> João Pedro</p>
+      <p class="card-when">05 de dezembro de 2026 · às 15h30<br>Mansão Brilhante · Ponte Alta Norte<br>Brasília · DF</p>
+      <p class="card-quote">“O amor nos uniu, e diante de Deus e das nossas famílias diremos sim.”</p>
+      <span class="flor esq"></span>
+      <span class="flor dir"></span>
     </div>
   </section>
 
