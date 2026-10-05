@@ -168,7 +168,9 @@
   /* ───────── MUSIC ───────── */
   #music{padding:20px 0 40px;text-align:center;}
   .music-note{font-size:13.5px;line-height:1.8;color:var(--ink-soft);max-width:380px;margin:22px auto 0;}
-  .spotify-hidden{position:fixed;width:300px;height:152px;left:-9999px;top:0;opacity:0;pointer-events:none;overflow:hidden;}
+  .spotify-hidden{position:fixed;width:300px;height:80px;left:0;bottom:0;opacity:.01;pointer-events:none;overflow:hidden;z-index:-1;}
+  #musicToggle.chama{animation:chama 1.6s ease-in-out infinite;}
+  @keyframes chama{0%,100%{box-shadow:0 8px 24px rgba(138,106,36,.2)}50%{box-shadow:0 0 0 8px rgba(176,141,60,.25),0 8px 24px rgba(138,106,36,.3)}}
   #musicToggle{
     position:fixed;right:16px;bottom:16px;z-index:900;
     display:none;align-items:center;gap:9px;cursor:pointer;
@@ -477,26 +479,43 @@ document.getElementById('linkPresentes').href=CONFIG.linkPresentes;
 document.getElementById('linkPresenca').href=CONFIG.linkPresenca;
 document.title=CONFIG.noivos+' — Casamento';
 
-/* ─── MÚSICA (Spotify embed) ─── */
+/* ─── MÚSICA (Spotify) — toca automaticamente ao abrir o convite ─── */
 const musicToggle=document.getElementById('musicToggle');
 let sp=null, spReady=false, querTocar=false, tocando=false, iniciou=false;
 function setMusicIcon(p){
   tocando=p;
   document.getElementById('iconPlay').style.display=p?'none':'block';
   document.getElementById('iconPause').style.display=p?'block':'none';
+  if(p) musicToggle.classList.remove('chama');
 }
 window.onSpotifyIframeApiReady=function(IFrameAPI){
   IFrameAPI.createController(document.getElementById('spotifyEmbed'),
-    {uri:'spotify:track:'+CONFIG.spotifyTrack,width:'100%',height:152},
+    {uri:'spotify:track:'+CONFIG.spotifyTrack,width:'100%',height:80},
     function(ctrl){
       sp=ctrl;
       ctrl.addListener('ready',()=>{spReady=true;if(querTocar)tocar();});
-      ctrl.addListener('playback_update',e=>{setMusicIcon(!e.data.isPaused);});
+      ctrl.addListener('playback_update',e=>{
+        const d=e.data;
+        setMusicIcon(!d.isPaused);
+        // ao terminar, recomeça (loop)
+        if(querTocar && d.isPaused && d.duration && d.position>=d.duration-600){ try{sp.seek(0);sp.resume();}catch(_){} }
+      });
     });
 };
 (function(){const s=document.createElement('script');s.src='https://open.spotify.com/embed/iframe-api/v1';s.async=true;document.head.appendChild(s);})();
-function tocar(){ querTocar=true; if(spReady){ try{ if(iniciou) sp.resume(); else { sp.play(); iniciou=true; } }catch(e){} } }
+function tocar(){
+  querTocar=true;
+  if(!spReady) return;           // toca assim que o player carregar
+  try{ if(iniciou) sp.resume(); else { sp.play(); iniciou=true; } }catch(e){}
+}
 function pausar(){ querTocar=false; if(spReady){ try{sp.pause();}catch(e){} } }
+
+/* se o navegador bloquear, tenta de novo no próximo toque na página */
+function destravar(){ if(querTocar && !tocando) tocar(); }
+['pointerdown','touchend','keydown'].forEach(ev=>document.addEventListener(ev,e=>{
+  if(e.target.closest && e.target.closest('#musicToggle')) return;
+  destravar();
+},{passive:true}));
 
 /* ─── SPLASH dismiss ─── */
 document.getElementById('splash').addEventListener('click',function(){
@@ -507,6 +526,8 @@ document.getElementById('splash').addEventListener('click',function(){
     document.getElementById('main').classList.add('visible');
     musicToggle.style.display='flex';
     initReveal(); startCountdown();
+    // se ainda não começou a tocar, destaca o botão da música
+    setTimeout(()=>{ if(!tocando) musicToggle.classList.add('chama'); },3000);
   },950);
 });
 
